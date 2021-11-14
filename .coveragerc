@@ -2,7 +2,7 @@
 # https://coverage.readthedocs.io/en/latest/config.html
 
 [run]
-source = src/node_builder
+source = src/shoggoth
 omit =
 #branch = true  <-- removed due to miss calculating engagement.py
 

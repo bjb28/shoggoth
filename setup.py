@@ -85,7 +85,6 @@ setup(
     py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],
     include_package_data=True,
     install_requires=[
-        "docopt",
         "pyvmomi",
         "schema",
         "setuptools >= 24.2.0",
@@ -100,10 +99,8 @@ setup(
             # 1.11.1 fixed this issue, but to ensure expected behavior we'll pin
             # to never grab the regression version.
             "coveralls != 1.11.0",
-            "pre-commit",
             "pytest-cov",
             "pytest",
-            "vcrpy",
         ]
     },
 )
