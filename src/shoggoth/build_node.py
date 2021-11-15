@@ -8,8 +8,17 @@ from pyVim.connect import SmartConnect
 import pyVmomi
 
 def connection():
+def get_vCenter_user():
+    """Get the username for vCenter."""
+    while True:
+        username = input("Enter vCenter username: ")
+        if re.match(EMAIL_REGEX, username):
+            break
+        else:
+            print("Incorrectly formated email. Please try again.")
 
-def get_username():
+    return username
+
 
 def get_password():
 
