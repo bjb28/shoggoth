@@ -21,6 +21,9 @@ def get_vCenter_user():
 
 
 def get_password():
+    """Get the password for vCenter."""
+    return stdiomask.getpass()
+
 
 def get_vCenter():
 
