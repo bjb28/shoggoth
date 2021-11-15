@@ -25,7 +25,19 @@ def get_password():
     return stdiomask.getpass()
 
 
-def get_vCenter():
+def get_vCenter_ip() -> str:
+    """Get vCenter IP address."""
+    while True:
+        user_input = input("Enter vCenter IPv4 address: ")
+        try:
+            vCenter_ip: str = ip_address(user_input)
+            break
+        except ValueError as err:
+            # Raise error because 1 or more items were invald.
+            print(err, file=sys.stderr)
+
+    return str(vCenter_ip)
+
 
 def get_os_password():
 
