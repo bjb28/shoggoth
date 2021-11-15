@@ -6,6 +6,10 @@
 # Third-Party Libraries
 from pyVim.connect import SmartConnect
 import pyVmomi
+import stdiomask
+
+EMAIL_REGEX = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
+
 
 def connection():
 def get_vCenter_user():
