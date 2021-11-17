@@ -12,4 +12,4 @@ Converts [deployAm.ps1](https://github.com/Matrix20085/cptSmallTools/blob/main/d
 - [ ] Test boot/invoke-vmscript with the wait-tools option. Need to specify the script type I think
 - [ ] Add CPT account to ESXi with full perms
 - [ ] Auto-select host and data store one only one option is present.
-
+- [ ] Add reconnect function.
