@@ -7,7 +7,7 @@ import sys
 
 # Third-Party Libraries
 from pyVim.connect import SmartConnect
-import pyVmomi
+from pyVmomi import vim
 import stdiomask
 
 EMAIL_REGEX = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
@@ -32,7 +32,7 @@ def connect():
             print("Error with vCenter IP. Please check.")
             vCenter_ip = get_ip("Enter vCenter IPv4 address")
 
-        except pyVmomi.vim.fault.InvalidLogin as err:
+        except vim.fault.InvalidLogin as err:
             print(err.msg)
             print("Please re-enter the username and password.")
             vCenter_user = get_vCenter_user()
