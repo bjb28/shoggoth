@@ -14,7 +14,7 @@ EMAIL_REGEX = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
 
 
 def connect():
-    vCenter_ip = get_vCenter_ip()
+    vCenter_ip = get_ip("Enter vCenter IPv4 address")
     vCenter_user = get_vCenter_user()
     vCenter_password = get_password()
 
@@ -30,7 +30,7 @@ def connect():
         except ConnectionRefusedError as err:
             print(str(err))
             print("Error with vCenter IP. Please check.")
-            vCenter_ip = get_vCenter_ip()
+            vCenter_ip = get_ip("Enter vCenter IPv4 address")
 
         except pyVmomi.vim.fault.InvalidLogin as err:
             print(err.msg)
@@ -58,18 +58,18 @@ def get_password():
     return stdiomask.getpass()
 
 
-def get_vCenter_ip() -> str:
+def get_ip(msg) -> str:
     """Get vCenter IP address."""
     while True:
-        user_input = input("Enter vCenter IPv4 address: ")
+        user_input = input(f"{msg}: ")
         try:
-            vCenter_ip: str = ip_address(user_input)
+            ip: str = ip_address(user_input)
             break
         except ValueError as err:
             # Raise error because 1 or more items were invald.
             print(err, file=sys.stderr)
 
-    return str(vCenter_ip)
+    return str(ip)
 
 
 def get_os_password():
