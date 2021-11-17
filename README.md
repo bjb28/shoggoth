@@ -8,7 +8,8 @@ Converts [deployAm.ps1](https://github.com/Matrix20085/cptSmallTools/blob/main/d
 
 # To-Do #
 
-[ ]Add simple check to make sure the expected number of VMs are present
-[ ]Test boot/invoke-vmscript with the wait-tools option. Need to specify the script type I think
-[ ]Add CPT account to ESXi with full perms
+- [ ] Add simple check to make sure the expected number of VMs are present
+- [ ] Test boot/invoke-vmscript with the wait-tools option. Need to specify the script type I think
+- [ ] Add CPT account to ESXi with full perms
+- [ ] Auto-select host and data store one only one option is present.
 
