@@ -76,8 +76,38 @@ def get_os_password():
     pass
 
 
-def get_vmHost():
-    pass
+def get_vmHost(content):
+    """Get vmHost from vCenter."""
+
+    # Get a list of nodes from vCenter
+    host_view = content.viewManager.CreateContainerView(
+        content.rootFolder, [vim.HostSystem], True
+    )
+    nodes = [host for host in host_view.view]
+
+    # Holds the node names for input validation/location.
+    node_names = list()
+
+    # Display the node names in a list.
+    print("Nodes: ")
+    for node in nodes:
+        if node.runtime.connectionState == "connected":
+            node_names.append(node.name)
+            print(f"\t{node.name}")
+
+    print()
+    # Ask for node name and compare to list of possible names
+    while True:
+        vmHost_ip = get_ip("Enter node IP from above")
+        if vmHost_ip in node_names:
+            # Gets the vmHost from the list of nodes.
+            vmHost = nodes[node_names.index(vmHost_ip)]
+            break
+        else:
+            print("Incorrect Node, please check your input.")
+
+    host_view.Destroy()
+    return vmHost
 
 
 def check_default_NIC():
