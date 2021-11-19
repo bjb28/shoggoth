@@ -7,14 +7,14 @@ import sys
 
 # Third-Party Libraries
 from pyVim.connect import SmartConnect
-import pyVmomi
+from pyVmomi import vim
 import stdiomask
 
 EMAIL_REGEX = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
 
 
 def connect():
-    vCenter_ip = get_vCenter_ip()
+    vCenter_ip = get_ip("Enter vCenter IPv4 address")
     vCenter_user = get_vCenter_user()
     vCenter_password = get_password()
 
@@ -30,9 +30,9 @@ def connect():
         except ConnectionRefusedError as err:
             print(str(err))
             print("Error with vCenter IP. Please check.")
-            vCenter_ip = get_vCenter_ip()
+            vCenter_ip = get_ip("Enter vCenter IPv4 address")
 
-        except pyVmomi.vim.fault.InvalidLogin as err:
+        except vim.fault.InvalidLogin as err:
             print(err.msg)
             print("Please re-enter the username and password.")
             vCenter_user = get_vCenter_user()
@@ -58,34 +58,90 @@ def get_password():
     return stdiomask.getpass()
 
 
-def get_vCenter_ip() -> str:
+def get_ip(msg) -> str:
     """Get vCenter IP address."""
     while True:
-        user_input = input("Enter vCenter IPv4 address: ")
+        user_input = input(f"{msg}: ")
         try:
-            vCenter_ip: str = ip_address(user_input)
+            ip: str = ip_address(user_input)
             break
         except ValueError as err:
             # Raise error because 1 or more items were invald.
             print(err, file=sys.stderr)
 
-    return str(vCenter_ip)
+    return str(ip)
 
 
 def get_os_password():
     pass
 
 
-def get_vmHost():
-    pass
+def get_vmHost(content):
+    """Get vmHost from vCenter."""
+
+    # Get a list of nodes from vCenter
+    host_view = content.viewManager.CreateContainerView(
+        content.rootFolder, [vim.HostSystem], True
+    )
+    nodes = [host for host in host_view.view]
+
+    # Holds the node names for input validation/location.
+    node_names = list()
+
+    # Display the node names in a list.
+    print("Nodes: ")
+    for node in nodes:
+        if node.runtime.connectionState == "connected":
+            node_names.append(node.name)
+            print(f"\t{node.name}")
+
+    print()
+    # Ask for node name and compare to list of possible names
+    while True:
+        vmHost_ip = get_ip("Enter node IP from above")
+        if vmHost_ip in node_names:
+            # Gets the vmHost from the list of nodes.
+            vmHost = nodes[node_names.index(vmHost_ip)]
+            break
+        else:
+            print("Incorrect Node, please check your input.")
+
+    host_view.Destroy()
+    return vmHost
 
 
 def check_default_NIC():
     pass
 
 
-def get_datastore():
-    pass
+def get_datastore(datastores):
+    """Get the name for the target datastore."""
+
+    if len(datastores) != 1:
+        # Holds the datastore names for input validation/location.
+        datastore_names = list()
+
+        # Display the datastore names in a list.
+        print("Datastores: ")
+        for datastore in datastores:
+            datastore_names.append(datastore.name)
+            print(f"\t{datastore.name}")
+
+        print()
+        # Ask for datastore name and compare to list of possible names
+        while True:
+            datastore_name = input("Enter datastore name from above: ")
+            if datastore_name in datastore_names:
+                # Gets the vmHost from the list of nodes.
+                vmHost_datastore = datastores[datastore_names.index(datastore_name)]
+                break
+            else:
+                print("Incorrect Datastore, please check your input.")
+    else:
+        vmHost_datastore = datastores[0]
+        print(f'"{vmHost_datastore.name}" is the only datastore.')
+
+    return vmHost_datastore
 
 
 def get_operator_network():
