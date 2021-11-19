@@ -117,7 +117,7 @@ def check_default_NIC():
 def get_datastore(datastores):
     """Get the name for the target datastore."""
 
-    if len(datastores) == 0:
+    if len(datastores) != 1:
         # Holds the datastore names for input validation/location.
         datastore_names = list()
 
