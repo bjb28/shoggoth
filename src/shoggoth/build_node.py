@@ -114,8 +114,34 @@ def check_default_NIC():
     pass
 
 
-def get_datastore():
-    pass
+def get_datastore(datastores):
+    """Get the name for the target datastore."""
+
+    if len(datastores) == 0:
+        # Holds the datastore names for input validation/location.
+        datastore_names = list()
+
+        # Display the datastore names in a list.
+        print("Datastores: ")
+        for datastore in datastores:
+            datastore_names.append(datastore.name)
+            print(f"\t{datastore.name}")
+
+        print()
+        # Ask for datastore name and compare to list of possible names
+        while True:
+            datastore_name = input("Enter datastore name from above: ")
+            if datastore_name in datastore_names:
+                # Gets the vmHost from the list of nodes.
+                vmHost_datastore = datastores[datastore_names.index(datastore_name)]
+                break
+            else:
+                print("Incorrect Datastore, please check your input.")
+    else:
+        vmHost_datastore = datastores[0]
+        print(f'"{vmHost_datastore.name}" is the only datastore.')
+
+    return vmHost_datastore
 
 
 def get_operator_network():
