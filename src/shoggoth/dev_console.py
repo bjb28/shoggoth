@@ -7,7 +7,7 @@ and getting a vmHost."""
 from IPython import embed
 
 # Customer Libraries
-from shoggoth.build_node import connect, get_vmHost
+from shoggoth.build_node import connect, get_datastore, get_vmHost
 
 
 def main():
@@ -16,7 +16,7 @@ def main():
     vCenter = connect()
     content = vCenter.RetrieveContent()
     vmHost = get_vmHost(content)
-
+    datastore = get_datastore(vmHost)
     embed()
 
 
