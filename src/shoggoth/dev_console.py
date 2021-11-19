@@ -16,7 +16,7 @@ def main():
     vCenter = connect()
     content = vCenter.RetrieveContent()
     vmHost = get_vmHost(content)
-    datastore = get_datastore(vmHost)
+    datastore = get_datastore(vmHost.datastore)
     embed()
 
 
