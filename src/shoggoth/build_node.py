@@ -152,8 +152,39 @@ def get_number_operator():
     pass
 
 
-def build_networks():
-    pass
+def build_network(network: dict, vmHost):
+    """Build a network from a dictionary.
+
+    To build the network the following is needed
+    in a dictionary:
+        vSwitch_name (str): Name of the vSwitch.
+        nic_name (str): Name of the virtal nic to bridge
+           This is optional, with out there will be no
+           uplink.
+        numPorts (int): The number of ports on the
+           vSwitch. If not provided it will be set
+           to 256.
+
+    Args:
+        network (dict):  The configuration of the network as outlined.
+        vmHost (pyVmomi.VmomiSupport.vim.HostSystem): The host to add
+           the network to.
+    """
+    # Builds out a new vSwitch
+    # TODO validate vSwitch with name does not exist.
+    vSwitch_spec = vim.host.VirtualSwitch.Specification()
+
+    if "nic_name" in network.keys():
+        vSwitch_spec.bridge = vim.host.VirtualSwitch.BondBridge(
+            nicDevice=network["nic_name"]
+        )
+    if "numPorts" in network.keys():
+        vSwitch_spec.numPorts = network["numPorts"]
+    else:
+        vSwitch_spec.numPorts = 256
+
+    # TODO Validate the switch was built.
+    vmHost.configManager.networkSystem.AddVirtualSwitch(network["name"], vSwitch_spec)
 
 
 def set_autostart():
