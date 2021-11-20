@@ -164,6 +164,7 @@ def build_network(network: dict, vmHost):
         numPorts (int): The number of ports on the
            vSwitch. If not provided it will be set
            to 256.
+        portGroup_name (str): Name of the port group.
 
     Args:
         network (dict):  The configuration of the network as outlined.
@@ -185,6 +186,21 @@ def build_network(network: dict, vmHost):
 
     # TODO Validate the switch was built.
     vmHost.configManager.networkSystem.AddVirtualSwitch(network["name"], vSwitch_spec)
+
+    # Adds the port group
+    # TODO validate port group with name does not exist.
+    portGroup_spec = vim.host.PortGroup.Specification()
+    portGroup_spec.vswitchName = network["name"]
+    portGroup_spec.name = network["portGroup_name"]
+    network_policy = vim.host.NetworkPolicy()
+    network_policy.security = vim.host.NetworkPolicy.SecurityPolicy()
+    network_policy.security.allowPromiscuous = True
+    network_policy.security.macChanges = False
+    network_policy.security.forgedTransmits = False
+    portGroup_spec.policy = network_policy
+
+    # TODO Validate the port group was built.
+    vmHost.configManager.networkSystem.AddPortGroup(portGroup_spec)
 
 
 def set_autostart():
