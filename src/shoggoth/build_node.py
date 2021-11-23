@@ -189,8 +189,6 @@ def build_network(network_dict: dict, vmHost):
         vSwitch_spec.bridge = vim.host.VirtualSwitch.BondBridge(
             nicDevice=network_dict["nic_name"]
         )
-    if "numPorts" in network.keys():
-        vSwitch_spec.numPorts = network["numPorts"]
     if "numPorts" in network_dict.keys():
         vSwitch_spec.numPorts = network_dict["numPorts"]
     else:
@@ -217,6 +215,24 @@ def build_network(network_dict: dict, vmHost):
 
     # TODO Validate the port group was built.
     vmHost.configManager.networkSystem.AddPortGroup(portGroup_spec)
+
+    # Adds a Management Nic is needed.
+    # TOD Add ability to set up management service.
+    if "management_ip" in network_dict.keys():
+        nic_spec = vim.host.VirtualNic.Specification()
+
+        # Set up IP config
+        nic_ip = vim.host.IpConfig()
+        nic_ip.dhcp = False
+        nic_ip.ipAddress = network_dict["management_ip"]
+        nic_ip.subnetMask = network_dict["management_mask"]
+
+        nic_spec.ip = nic_ip
+        nic_spec.portgroup = network_dict["portGroup_name"]
+
+        vmHost.configManager.networkSystem.AddVirtualNic(
+            network_dict["portGroup_name"], nic_spec
+        )
 
 
 def set_autostart():
