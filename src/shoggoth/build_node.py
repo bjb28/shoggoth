@@ -158,46 +158,56 @@ def get_number_operator():
     pass
 
 
-def build_network(network: dict, vmHost):
+def build_network(network_dict: dict, vmHost):
     """Build a network from a dictionary.
 
     To build the network the following is needed
     in a dictionary:
         vSwitch_name (str): Name of the vSwitch.
-        nic_name (str): Name of the virtal nic to bridge
+        nic_name (str): Name of the virtual nic to bridge
            This is optional, with out there will be no
            uplink.
         numPorts (int): The number of ports on the
            vSwitch. If not provided it will be set
-           to 256.
+           to 1024.
         portGroup_name (str): Name of the port group.
+        management_ip (str): Optional IP for management interface.
+        management_mask (str): If management_ip is provided, a
+           subnet mask is required.
 
     Args:
-        network (dict):  The configuration of the network as outlined.
+        network_dict (dict):  The configuration of the network as outlined.
         vmHost (pyVmomi.VmomiSupport.vim.HostSystem): The host to add
            the network to.
     """
     # Builds out a new vSwitch
     # TODO validate vSwitch with name does not exist.
+
     vSwitch_spec = vim.host.VirtualSwitch.Specification()
 
-    if "nic_name" in network.keys():
+    if "nic_name" in network_dict.keys():
         vSwitch_spec.bridge = vim.host.VirtualSwitch.BondBridge(
-            nicDevice=network["nic_name"]
+            nicDevice=network_dict["nic_name"]
         )
     if "numPorts" in network.keys():
         vSwitch_spec.numPorts = network["numPorts"]
+    if "numPorts" in network_dict.keys():
+        vSwitch_spec.numPorts = network_dict["numPorts"]
     else:
-        vSwitch_spec.numPorts = 256
+        vSwitch_spec.numPorts = 1024
+
+    vSwitch_spec.mtu = 1500
 
     # TODO Validate the switch was built.
-    vmHost.configManager.networkSystem.AddVirtualSwitch(network["name"], vSwitch_spec)
+    vmHost.configManager.networkSystem.AddVirtualSwitch(
+        network_dict["name"], vSwitch_spec
+    )
 
     # Adds the port group
     # TODO validate port group with name does not exist.
     portGroup_spec = vim.host.PortGroup.Specification()
-    portGroup_spec.vswitchName = network["name"]
-    portGroup_spec.name = network["portGroup_name"]
+    portGroup_spec.vswitchName = network_dict["name"]
+    portGroup_spec.name = network_dict["portGroup_name"]
     network_policy = vim.host.NetworkPolicy()
     network_policy.security = vim.host.NetworkPolicy.SecurityPolicy()
     network_policy.security.allowPromiscuous = True
