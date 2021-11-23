@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 # Standard Python Libraries
+import atexit
 from ipaddress import ip_address
 import re
 import sys
 
 # Third-Party Libraries
-from pyVim.connect import SmartConnect
+from pyVim.connect import Disconnect, SmartConnect
 from pyVmomi import vim
 import stdiomask
 
@@ -26,6 +27,7 @@ def connect():
                 pwd=vCenter_password,
                 disableSslCertValidation=True,
             )
+            atexit.register(Disconnect, connection)
             break
         except ConnectionRefusedError as err:
             print(str(err))
