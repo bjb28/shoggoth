@@ -81,11 +81,13 @@ def get_os_password():
 def get_vmHost(content):
     """Get vmHost from vCenter."""
 
+    vmHost = None
+
     # Get a list of nodes from vCenter
     host_view = content.viewManager.CreateContainerView(
         content.rootFolder, [vim.HostSystem], True
     )
-    nodes = [host for host in host_view.view]
+    nodes = list(host_view.view)
 
     # Holds the node names for input validation/location.
     node_names = list()
@@ -96,6 +98,8 @@ def get_vmHost(content):
         if node.runtime.connectionState == "connected":
             node_names.append(node.name)
             print(f"\t{node.name}")
+        else:
+            node_names.append(node.name)
 
     print()
     # Ask for node name and compare to list of possible names
